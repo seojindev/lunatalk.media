@@ -24,6 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit(0);
 }
 
+header('Content-type: application/json');
+
+
 Route::add('/info', function() {
     $check = BaseController::checkHeader();
     if ($check['state'] === false) {

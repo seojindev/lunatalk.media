@@ -27,7 +27,6 @@ class ImageController extends BaseController
         $MediaCateogry = BaseController::$MediaCategory;
         $MediaFile = BaseController::$MediaFile;
 
-
         if (isset($MediaFile['error']) && $MediaFile['error'] === UPLOAD_ERR_OK) {
             $fileTmpPath = $MediaFile['tmp_name'];
             $fileName = $MediaFile['name'];
@@ -39,9 +38,10 @@ class ImageController extends BaseController
             $newFileName = $newfileBasename . '.' . $fileExtension;
             $newSubDir = sha1(date("Ymd"));
 
-            $allowedfileExtensions = array('jpeg', 'jpg', 'gif', 'png', 'zip', 'txt', 'xls', 'doc');
+            // $allowedFileTypes = array ( 'application/pdf', 'image/jpeg', 'image/png' );
+            $allowedFileTypes = array ( 'image/jpeg', 'image/png' );
 
-            if (in_array($fileExtension, $allowedfileExtensions)) {
+            if (in_array($fileType, $allowedFileTypes)) {
                 $baseDirectory = "/storage/{$MediaName}/{$MediaCateogry}/" . $newSubDir;
                 $uploadFileDir = $_SERVER["DOCUMENT_ROOT"] . $baseDirectory;
                 $uploadFileDestpath = $baseDirectory;

@@ -30,7 +30,7 @@ trait Databases
         $db = self::$DB;
 
         $files = $db->get('media_files');
-        print_r($files);
+        // print_r($files);
     }
 
     public static function insertNicapageMediaFiles($params = [])
@@ -38,7 +38,6 @@ trait Databases
         $db = self::$DB;
 
         $task = $db->insert ('media_files', [
-            'category' => isset($params['category']) && $params['category'] ? $params['category'] : NULL,
             'dest_path' => isset($params['dest_path']) && $params['dest_path'] ? $params['dest_path'] : NULL,
             'file_name' => isset($params['file_name']) && $params['file_name'] ? $params['file_name'] : NULL,
             'original_name' => isset($params['original_name']) && $params['original_name'] ? $params['original_name'] : NULL,

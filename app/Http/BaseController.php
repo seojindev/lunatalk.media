@@ -33,8 +33,7 @@ class BaseController
         $headers = apache_request_headers();
 
         $ClientToken = isset($headers['Client-Token']) && $headers['Client-Token'] ? trim($headers['Client-Token']) : NULL;
-print_r($_POST);
-print_r($_FILES);
+
         $mediaName = isset($_POST['media_name']) && $_POST['media_name'] ? trim($_POST['media_name']) : NULL;
         $mediaCategory = isset($_POST['media_category']) && $_POST['media_category'] ? trim($_POST['media_category']) : 'upload';
 
