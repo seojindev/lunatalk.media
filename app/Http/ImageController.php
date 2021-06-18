@@ -26,6 +26,8 @@ class ImageController extends BaseController
         $MediaName = BaseController::$MediaName;
         $MediaCateogry = BaseController::$MediaCategory;
         $MediaFile = BaseController::$MediaFile;
+        $NeedThumbnail = BaseController::$NeedThumbnail;
+
 
         if (isset($MediaFile['error']) && $MediaFile['error'] === UPLOAD_ERR_OK) {
             $fileTmpPath = $MediaFile['tmp_name'];
@@ -36,6 +38,7 @@ class ImageController extends BaseController
             $fileExtension = strtolower(end($fileNameCmps));
 
             $newFileName = $newfileBasename . '.' . $fileExtension;
+            $newThumFileName = "thum_".$newFileName;
             $newSubDir = sha1(date("Ymd"));
 
             // $allowedFileTypes = array ( 'application/pdf', 'image/jpeg', 'image/png' );
@@ -49,21 +52,32 @@ class ImageController extends BaseController
 
                 try {
 
-                    if(!is_dir($uploadFileDir)){
+                    if(!is_dir($uploadFileDir)) {
                         if(!mkdir($uploadFileDir, 0777, true)) {
                             BaseController::serverResponse([
                                 'state' => false,
-                                'message' => '처리중 문제가 발생 했습니다. (005)',
+                                'message' => '처리중 문제가 발생 했습니다. (006)',
                             ], 500);
                         }
                     }
 
                     $dest_path = $uploadFileDir . "/" . $newFileName;
+                    $dest_thum_path = $uploadFileDir . "/" . $newThumFileName;
                     $dest_url = $uploadFileURL . "/" . $newFileName;
 
-                    $resizeResult = BaseController::imageResize($fileTmpPath, $dest_path, 1024, 768);
+                    if(move_uploaded_file($fileTmpPath, $dest_path)) {
+                        if($NeedThumbnail === 'true') {
+                            $resizeResult = BaseController::imageResize($dest_path, $dest_thum_path, 120, 120);
+                            if(!$resizeResult['state']) {
+                                BaseController::serverResponse([
+                                    'state' => false,
+                                    'message' => '처리중 문제가 발생 했습니다. (006)',
+                                    'error' => '이미지 싸이즈 조정 실패 했습니다.'
+                                ], 500);
+                                return;
+                            }
+                        }
 
-                    if($resizeResult['state'] == true) {
                         $uploadFileURL = PROTOCOL . $_SERVER["HTTP_HOST"] . $dest_url;
                         BaseController::serverResponse([
                             'state' => true,
@@ -82,11 +96,12 @@ class ImageController extends BaseController
                             ]
                         ], 201);
                         return;
+
                     } else {
                         BaseController::serverResponse([
                             'state' => false,
-                            'message' => '처리중 문제가 발생 했습니다. (004)',
-                            'error' => $resizeResult['error']
+                            'message' => '처리중 문제가 발생 했습니다. (005)',
+                            'error' => '이미지 이동중 문제가 발생 했습니다.'
                         ], 500);
                         return;
                     }

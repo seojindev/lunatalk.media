@@ -9,6 +9,7 @@ class BaseController
     public static $MediaName;
     public static $MediaCategory;
     public static $MediaFile;
+    public static $NeedThumbnail;
 
     public function __construct()
 	{
@@ -36,6 +37,7 @@ class BaseController
 
         $mediaName = isset($_POST['media_name']) && $_POST['media_name'] ? trim($_POST['media_name']) : NULL;
         $mediaCategory = isset($_POST['media_category']) && $_POST['media_category'] ? trim($_POST['media_category']) : 'upload';
+        $NeedThumbnail = isset($_POST['need_thumbnail']) && $_POST['need_thumbnail'] ? trim($_POST['need_thumbnail']) : 'upload';
 
         $mediaFile = isset($_FILES['media_file']) && $_FILES['media_file'] ? $_FILES['media_file'] : NULL;
 
@@ -53,16 +55,10 @@ class BaseController
             ];
         }
 
-        if($mediaCategory == NULL) {
-            // return [
-            //     'state' => false,
-            //     'message' => '미디어 파일이 존재 하지 않습니다.'
-            // ];
-        }
-
         BaseController::$MediaName = $mediaName;
         BaseController::$MediaCategory = $mediaCategory;
         BaseController::$MediaFile = $mediaFile;
+        BaseController::$NeedThumbnail = $NeedThumbnail;
 
         return [
             'state' => true
@@ -116,8 +112,7 @@ class BaseController
         $clock_seq_hi_and_reserved = $clock_seq_hi_and_reserved >> 2;
         $clock_seq_hi_and_reserved = $clock_seq_hi_and_reserved | 0x8000;
 
-        return sprintf('%08s-%04s-%04x-%04x-%012s',
-            $time_low, $time_mid, $time_hi_and_version, $clock_seq_hi_and_reserved, $node);
+        return sprintf('%08s-%04s-%04x-%04x-%012s', $time_low, $time_mid, $time_hi_and_version, $clock_seq_hi_and_reserved, $node);
     }
 
     public static function imageResize(String $sourceFilePath, String $tagetFilePath, Int $Width, Int $Height)
@@ -129,7 +124,7 @@ class BaseController
             list($fileWidth, $fileHeight) = getimagesize($sourceFilePath);
 
             if ($Width > $fileWidth && $Height > $fileHeight) {
-                move_uploaded_file($sourceFilePath, $tagetFilePath);
+                copy($sourceFilePath, $tagetFilePath);
                 return [
                     'state' => true
                 ];
@@ -181,23 +176,17 @@ class BaseController
             default:
                 return false;
                 break;
-
         }
 
         // Try getting a cryptographically secure token
         $token = openssl_random_pseudo_bytes($byteLength);
 
         if ($token !== false) {
-
             return bin2hex($token);
-
         }
         else {
-
             // openssl_random_pseudo_bytes failed
             return false;
-
         }
-
     }
 }
