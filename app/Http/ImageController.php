@@ -42,7 +42,7 @@ class ImageController extends BaseController
             $newSubDir = sha1(date("Ymd"));
 
             // $allowedFileTypes = array ( 'application/pdf', 'image/jpeg', 'image/png' );
-            $allowedFileTypes = array ( 'image/jpeg', 'image/png' );
+            $allowedFileTypes = array ( 'image/jpeg', 'image/png', 'image/gif' );
 
             if (in_array($fileType, $allowedFileTypes)) {
                 $baseDirectory = "/storage/{$MediaName}/{$MediaCateogry}/" . $newSubDir;
