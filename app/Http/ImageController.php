@@ -67,7 +67,7 @@ class ImageController extends BaseController
 
                     if(move_uploaded_file($fileTmpPath, $dest_path)) {
                         if($NeedThumbnail === 'true') {
-                            $resizeResult = BaseController::imageResize($dest_path, $dest_thum_path, 120, 120);
+                            $resizeResult = BaseController::imageResize($dest_path, $dest_thum_path, 300, 300);
                             if(!$resizeResult['state']) {
                                 BaseController::serverResponse([
                                     'state' => false,
