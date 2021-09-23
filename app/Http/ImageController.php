@@ -66,6 +66,7 @@ class ImageController extends BaseController
                     $dest_url = $uploadFileURL . "/" . $newFileName;
 
                     if(move_uploaded_file($fileTmpPath, $dest_path)) {
+                        list($fileWidth, $fileHeight) = getimagesize($dest_path);
                         if($NeedThumbnail === 'true') {
                             $resizeResult = BaseController::imageResize($dest_path, $dest_thum_path, 300, 300);
                             if(!$resizeResult['state']) {
@@ -90,6 +91,8 @@ class ImageController extends BaseController
                                 'dest_path' => $uploadFileDestpath,
                                 'new_file_name' => $newFileName,
                                 'original_name' => $fileName,
+                                'width' => $fileWidth,
+                                'height' => $fileHeight,
                                 'file_type' => $fileType,
                                 'file_size' => $fileSize,
                                 'file_extension' => $fileExtension,
